@@ -10,16 +10,19 @@ update Txt
 */
 
 /* Trigger Btn */
-let btn = gui.dom.btn 
+let btn = gui.dom.btn;
 btn.addEventListener("click", actOnClick)
 
 /* Trigger Input */
-let field = gui.dom.field
+let field = gui.dom.field;
 field.addEventListener("input", isInputValid)
+field.addEventListener("focusout", actOnClick)
+
 
 /* Click (Event) - Dispatcher */
 function actOnClick() {
     if (isInputValid()) {
+        tmpStr = ""; //reset the global variable for keeping the valid gui.dom.field.value
         controller(); // nur dann, wenn Input gültig!
     }
     else{
@@ -29,14 +32,22 @@ function actOnClick() {
 
 //Funktionalität: Check auf Datenkonsistenz  --> Test:
 //ausgabe(isInputValid());
+
+var tmpStr = ""; //global variable to keep the valid gui.dom.field.value
+
 function isInputValid() { // Frage: Is input valid?
     let inputStr = gui.dom.field.value; // verweis auf obj
     let patt = /^[0-9]{1,3}$/g;  //max 3 Ziffern zugelassen
     let cond = patt.test(inputStr);
     if (!cond) {
-        gui.dom.field.value = "";
+        gui.dom.field.value = tmpStr; //= "";
+        alert ("Es würden nur ein- bis dreistellige Zahlen eingegeben werden.");
         updateImg(["tee"]);
     } 
+    else {
+        tmpStr = gui.dom.field.value
+    }
+    
     return cond;
 }
 
@@ -73,7 +84,8 @@ function updateImg(imgArr) {
 //Modul: Txt update --> Test:
 //updateTxt(["bier,cola"])
 function updateTxt(strArr) {
-    let str = "Dein(e) Getränk(e): ";
+    let str = "Du bist " + getInput() + " Jahre alt, und darfst folgende(s) Getränk(e) wählen: ";
+    // gui.dom.field.value ="";
     for (let i = 0; i < strArr.length; i++) {
         str += strArr[i].toUpperCase();
         if (i<strArr.length - 1){str += ", ";}
